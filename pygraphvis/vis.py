@@ -53,7 +53,7 @@ class Visualiser:
 
     graph = None
     font = None
-    running = False
+    should_exit = False
     event_handler = None
     _size = None
 
@@ -79,14 +79,19 @@ class Visualiser:
 
         self.lock = threading.Lock()
         self.viewport = Viewport(vec.mul(size, -0.5 * scale), scale)
+
+        self.reset()
+
+    def reset(self):
+        self.should_stop = False
         self.screen = pygame.display.set_mode(self._size)
 
-    def start(self):
-        self.thread = threading.Thread(target = self.render_loop)
-        self.thread.start()
+        pygame.init()
+        self.font = pygame.font.Font(None, 20)
+        pygame.display.set_caption(self.title)
 
     def stop(self):
-        self.running = False
+        self.should_stop = True
 
     def project(self, v):
         viewport_pos = vec.sub(v, self.viewport.pos)
@@ -133,7 +138,7 @@ class Visualiser:
     def handle_input(self):
         for event in pygame.event.get():
             if event.type == QUIT:
-                self.running = False
+                self.should_stop = False
                 self.dispatch_event(InputEvent(InputType.QUIT))
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button in [1, 2, 3]:
@@ -238,12 +243,7 @@ class Visualiser:
         pygame.display.flip()
 
     def render_loop(self):
-        pygame.init()
-        self.font = pygame.font.Font(None, 20)
-        pygame.display.set_caption(self.title)
-
-        self.running = True
-        while self.running:
+        while not self.should_stop:
             self.ft.tick();
             self.handle_input()
 

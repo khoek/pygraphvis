@@ -143,8 +143,4 @@ if __name__ == "__main__":
     root_name = input("Please enter the name of a Wikipedia page: ")
     create_new_node((0, 0), root_name, False)
 
-    try:
-        v.start()
-        v.thread.join()
-    finally:
-        v.stop()
+    v.render_loop()
