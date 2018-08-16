@@ -49,8 +49,6 @@ class InputEvent():
         self.state = state
 
 class Visualiser:
-    title = "pygraphvis"
-
     graph = None
     font = None
     should_exit = False
@@ -71,7 +69,7 @@ class Visualiser:
     selected_node = None
     selected_node_was_static = False
 
-    def __init__(self, graph, size = (1000, 1000), scale = 0.1, framerate = 50, event_handler = None):
+    def __init__(self, graph, size = (1000, 1000), scale = 0.1, title = "pygraphvis", framerate = 50, event_handler = None):
         self.graph = graph
         self._size = size
         self.ft = FramerateTracker(framerate)
@@ -80,15 +78,12 @@ class Visualiser:
         self.lock = threading.Lock()
         self.viewport = Viewport(vec.mul(size, -0.5 * scale), scale)
 
-        self.reset()
-
-    def reset(self):
         self.should_stop = False
         self.screen = pygame.display.set_mode(self._size)
 
         pygame.init()
         self.font = pygame.font.Font(None, 20)
-        pygame.display.set_caption(self.title)
+        pygame.display.set_caption(title)
 
     def stop(self):
         self.should_stop = True
