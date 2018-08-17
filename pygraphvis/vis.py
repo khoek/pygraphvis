@@ -63,6 +63,7 @@ class Visualiser:
     screen = None
     lock = None
 
+    hide_names = False
     mouse_down = False
     pan_grab_pos = None
     viewport_down_pos = None
@@ -111,12 +112,14 @@ class Visualiser:
     def draw_node(self, n):
         screen_pos = self.project(n.pos)
         pygame.draw.circle(self.screen, n.style.value.colour, screen_pos, n.style.value.radius, 0)
-        if not n.style.valid:
-            n.style.cache.text, bdrect = self.font.render(n.style.value.name, fgcolor=n.style.value.font_colour)
-            n.style.validate()
 
-        text = n.style.cache.text
-        self.screen.blit(text, vec.add(screen_pos, (-0.5 * text.get_width(), text.get_height() - 7)))
+        if not self.hide_names:
+            if not n.style.valid:
+                n.style.cache.text, bdrect = self.font.render(n.style.value.name, fgcolor=n.style.value.font_colour)
+                n.style.validate()
+
+            text = n.style.cache.text
+            self.screen.blit(text, vec.add(screen_pos, (-0.5 * text.get_width(), text.get_height() - 7)))
 
     def draw_edge(self, n, m, thickness, colour):
         z1 = self.project(n.pos)
@@ -158,6 +161,9 @@ class Visualiser:
             if event.type == QUIT:
                 self.should_stop = False
                 self.dispatch_event(InputEvent(InputType.QUIT))
+            elif event.type == KEYDOWN:
+                if event.key == K_h:
+                    self.hide_names = not self.hide_names
             elif event.type == MOUSEBUTTONDOWN:
                 if event.button in [1, 2, 3]:
                     self.mousebutton_pressed(event)
