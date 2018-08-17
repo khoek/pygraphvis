@@ -8,6 +8,7 @@ from enum import Enum
 real_stdout = sys.stdout
 sys.stdout = None
 import pygame
+import pygame.gfxdraw
 from pygame.locals import *
 sys.stdout = real_stdout
 
@@ -116,8 +117,29 @@ class Visualiser:
         text = n.style.cache.text
         self.screen.blit(text, vec.add(screen_pos, (-0.5 * text.get_width(), text.get_height() - 7)))
 
-    def draw_edge(self, n, m):
-        pygame.draw.aaline(self.screen, (255, 255, 255), self.project(n.pos), self.project(m.pos), 1)
+    def draw_edge(self, n, m, thickness, colour):
+        z1 = self.project(n.pos)
+        z2 = self.project(m.pos)
+        if thickness <= 1:
+            pygame.draw.aaline(self.screen, colour, z1, z2, 1)
+        else:
+            # FIXME make this readable
+            x1 = z1[0]
+            y1 = z1[1]
+            x2 = z2[0]
+            y2 = z2[1]
+            angle = math.atan2(y2 - y1, x2 - x1)
+            delta = vec.rotate2d((thickness / 2.0, 0), angle)
+            p1 = (x1 - delta[0], y1 + delta[1])
+            xx2 = x1 + delta[0]
+            yy2 = y1 - delta[1]
+            xx3 = x2 + delta[0]
+            yy3 = y2 - delta[1]
+            xx4 = x2 - delta[0]
+            yy4 = y2 + delta[1]
+
+            pygame.gfxdraw.aapolygon(self.screen, (p1, (xx2, yy2), (xx3, yy3), (xx4, yy4)), colour)
+            pygame.gfxdraw.filled_polygon(self.screen, (p1, (xx2, yy2), (xx3, yy3), (xx4, yy4)), colour)
 
     def draw_bg(self):
         self.screen.fill((20, 20, 20))
@@ -229,7 +251,10 @@ class Visualiser:
         for n in self.graph.nodes:
             for m in n.adj:
                 if self.crosses_viewport(n, m):
-                    self.draw_edge(n, m)
+                    data = n.adj[m]
+                    width, colour = (0.1, (255, 255, 255)) if data is None else data
+                    self.draw_edge(n, m, width, colour)
+
         for n in self.graph.nodes:
             if self.in_viewport(n):
                 self.draw_node(n)

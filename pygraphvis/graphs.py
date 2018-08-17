@@ -59,7 +59,7 @@ class Node:
         self.vel = vel
         self.mass = mass
         self.static = static
-        self.adj = set()
+        self.adj = {}
 
 class DynamicGraph:
     nodes = None

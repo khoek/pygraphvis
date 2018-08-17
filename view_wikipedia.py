@@ -57,9 +57,9 @@ class NodePrivateData():
             child = create_new_node(node.pos, child_name)
 
         if not child in node.adj:
-            node.adj.add(child)
+            node.adj[child] = None
         if not node in child.adj:
-            child.adj.add(node)
+            child.adj[node] = None
 
         v.lock.release()
 
