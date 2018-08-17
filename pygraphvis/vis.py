@@ -8,6 +8,7 @@ from enum import Enum
 real_stdout = sys.stdout
 sys.stdout = None
 import pygame
+import pygame.freetype
 import pygame.gfxdraw
 from pygame.locals import *
 sys.stdout = real_stdout
@@ -83,7 +84,7 @@ class Visualiser:
         self.screen = pygame.display.set_mode(self._size)
 
         pygame.init()
-        self.font = pygame.font.Font(None, 20)
+        self.font = pygame.freetype.Font(None, 20)
         pygame.display.set_caption(title)
 
     def stop(self):
@@ -111,7 +112,7 @@ class Visualiser:
         screen_pos = self.project(n.pos)
         pygame.draw.circle(self.screen, n.style.value.colour, screen_pos, n.style.value.radius, 0)
         if not n.style.valid:
-            n.style.cache.text = self.font.render(n.style.value.name, 1, n.style.value.font_colour)
+            n.style.cache.text, bdrect = self.font.render(n.style.value.name, fgcolor=n.style.value.font_colour)
             n.style.validate()
 
         text = n.style.cache.text
