@@ -84,7 +84,7 @@ class Visualiser:
         self.screen = pygame.display.set_mode(self._size)
 
         pygame.init()
-        self.font = pygame.freetype.Font(None, 20)
+        self.font = pygame.freetype.SysFont("DejaVu Sans Mono", 16, bold=True)
         pygame.display.set_caption(title)
 
     def stop(self):
