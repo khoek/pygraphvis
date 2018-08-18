@@ -18,6 +18,8 @@ import pygraphvis.graphs as graph
 
 ZOOM_FACTOR = 1.2
 
+SYS_FONTS = "DejaVu Sans Mono,Inconsolata,Menlo,Monaco"
+
 class InputType(Enum):
     QUIT      = 1
     MB_LEFT   = 2
@@ -85,7 +87,7 @@ class Visualiser:
         self.screen = pygame.display.set_mode(self._size)
 
         pygame.init()
-        self.font = pygame.freetype.SysFont("DejaVu Sans Mono", 16, bold=True)
+        self.font = pygame.freetype.SysFont(SYS_FONTS, 16, bold=True)
         pygame.display.set_caption(title)
 
     def stop(self):
