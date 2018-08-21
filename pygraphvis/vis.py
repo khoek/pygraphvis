@@ -129,23 +129,16 @@ class Visualiser:
         if thickness <= 1:
             pygame.draw.aaline(self.screen, colour, z1, z2, 1)
         else:
-            # FIXME make this readable
-            x1 = z1[0]
-            y1 = z1[1]
-            x2 = z2[0]
-            y2 = z2[1]
-            angle = math.atan2(y2 - y1, x2 - x1)
+            angle = math.atan2(z2[1] - z1[1], z2[0] - z1[0])
             delta = vec.rotate2d((thickness / 2.0, 0), angle)
-            p1 = (x1 - delta[0], y1 + delta[1])
-            xx2 = x1 + delta[0]
-            yy2 = y1 - delta[1]
-            xx3 = x2 + delta[0]
-            yy3 = y2 - delta[1]
-            xx4 = x2 - delta[0]
-            yy4 = y2 + delta[1]
+            delta = (-delta[0], delta[1])
+            p1 = vec.add(z1, delta)
+            p2 = vec.sub(z1, delta)
+            p3 = vec.sub(z2, delta)
+            p4 = vec.add(z2, delta)
 
-            pygame.gfxdraw.aapolygon(self.screen, (p1, (xx2, yy2), (xx3, yy3), (xx4, yy4)), colour)
-            pygame.gfxdraw.filled_polygon(self.screen, (p1, (xx2, yy2), (xx3, yy3), (xx4, yy4)), colour)
+            pygame.gfxdraw.aapolygon(self.screen, (p1, p2, p3, p4), colour)
+            pygame.gfxdraw.filled_polygon(self.screen, (p1, p2, p3, p4), colour)
 
     def draw_bg(self):
         self.screen.fill((20, 20, 20))
