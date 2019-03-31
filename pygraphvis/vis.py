@@ -82,12 +82,13 @@ class Visualiser:
 
         self.lock = threading.Lock()
         self.viewport = Viewport(vec.mul(size, -0.5 * scale), scale)
-
         self.should_stop = False
-        self.screen = pygame.display.set_mode(self._size)
 
         pygame.init()
+
+        self.screen = pygame.display.set_mode(self._size, RESIZABLE)
         self.font = pygame.freetype.SysFont(SYS_FONTS, 16, bold=True)
+
         pygame.display.set_caption(title)
 
     def stop(self):
@@ -176,6 +177,9 @@ class Visualiser:
             elif event.type == MOUSEMOTION:
                 self.mouse_moved(event)
                 self.dispatch_event(InputEvent(InputType.M_MOVE))
+            elif event.type == pygame.VIDEORESIZE:
+                self._size = (event.w, event.h)
+                surface = pygame.display.set_mode(self._size, pygame.RESIZABLE)
         pygame.event.clear()
 
     def dispatch_event(self, e):
